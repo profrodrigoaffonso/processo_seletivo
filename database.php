@@ -86,7 +86,6 @@ class basedados{
             'cpf'               => $this->somenteNumeros($dados['cpf']), 
             'telefone'          => $this->somenteNumeros($dados['telefone']), 
             'data_nascimento'   => $dados['data_nascimento'],
-            'data_cadastro'     => date('Y-m-d H:i:s'), 
             'intervalo'         => $dados['intervalo'], 
             'valor'             => str_replace(',', '.', $dados['valor']), 
             'forma_pagamento'   => $dados['forma_pagamento'], 
