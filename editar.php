@@ -86,4 +86,5 @@ $doador = $base->retornaDados($_GET['id']);
 <script>
     $('#cpf').mask('000.000.000-00');
     $('#valor').mask('0000000000,00', {reverse: true});
+    $('#telefone').mask('(00) 0000-0000');
 </script>

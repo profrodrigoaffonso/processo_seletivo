@@ -78,3 +78,10 @@ if($_POST){
 
     </body>
 </html>
+<script src="js/jquery.js"></script>
+<script src="js/jquery.mask.min.js"></script>
+<script>
+    $('#cpf').mask('000.000.000-00');
+    $('#valor').mask('0000000000,00', {reverse: true});
+    $('#telefone').mask('(00) 0000-0000');
+</script>

@@ -3,11 +3,17 @@ require 'database.php';
 
 $base = new basedados();
 
+if($_POST){// comando para deletar
+
+    $base->deletar($_POST['id']);
+    // redireciona a pagina
+    echo '<script>window.location="/"</script>';
+
+
+}
+
+// lista dos doadores cadastrados
 $doadores = $base->listar();
-
-// print_r($doadores);
-
-// echo 'lll';
 
 ?>
 <!DOCTYPE html>
@@ -19,6 +25,8 @@ $doadores = $base->listar();
     <body>
         <div class="container">
         <h1 class="text-center">Lista de doadores</h1>
+        <a href="adicionar.php" class="btn btn-primary">Adicionar</a>
+
         <table class="table table-hover">
             <thead>
                 <tr>
@@ -28,6 +36,8 @@ $doadores = $base->listar();
                     <th scope="col">E-mail</th>
                     <th scope="col">Telefone</th>
                     <th scope="col">Valor</th>
+                    <th scope="col">Intervalo</th>
+                    <th scope="col">Forma de pagamento</th>
                     <th></th>
                 </tr>
             </thead>
@@ -40,17 +50,39 @@ $doadores = $base->listar();
                     <td><?=$doador['nome']?></td>
                     <td class="cpf"><?=$doador['cpf']?></td>
                     <td><?=$doador['email']?></td>
-                    <td><?=$doador['telefone']?></td>
+                    <td class="telefone"><?=$doador['telefone']?></td>
                     <td class="valor"><?=$doador['valor']?></td>
-                    <td><a href="editar.php?id=<?=$doador['id']?>" class="btn">Editar</a></td>
+                    <td>
+                        <?php
+                            switch($doador['intervalo']){
+                                case "U":
+                                    echo "Único";
+                                break;
+                                case "B":
+                                    echo "Bimestral";
+                                break;
+                                case "S":
+                                    echo "Semestral";
+                                break;
+                                case "A":
+                                    echo "Anual";
+                                break;
+                            }
+                        ?>
+                    </td>
+                    <td><?=($doador['forma_pagamento']=='D') ? 'Débito' : 'Crédito' ?></td>
+                    <td>
+                        <a href="editar.php?id=<?=$doador['id']?>" class="btn btn-primary">Editar</a>
+                        <button onclick="apagar(<?=$doador['id']?>)" class="btn btn-danger">Excluir</button>
+                    </td>
                 </tr>
             <?php
             endforeach;
             ?>            
             </tbody>
             </table>
-            <form id="form_delete" action="deletar.php" method="post">
-                <input type="text" id="id_delete" name="id">
+            <form id="form_delete" action="index.php" method="post">
+                <input type="hidden" id="id_delete" name="id">
             <form>
         </div>
 
@@ -61,4 +93,13 @@ $doadores = $base->listar();
 <script>
     $('.cpf').mask('000.000.000-00');
     $('.valor').mask('R$0.000.000.000,00', {reverse: true});
+    $('.telefone').mask('(00) 0000-0000');
+
+    function apagar(id){
+        if(window.confirm('Deseja excluir o registro?')){
+            $('#id_delete').val(id);
+            $('#form_delete').submit();
+
+        }
+    }
 </script>

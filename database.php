@@ -2,7 +2,7 @@
 class basedados{
 
     function __construct(){
-
+        // cria a conexao da base de dados
         try {
             $this->db = new PDO('mysql:host=localhost;dbname=processo_seletivo', 'dev', 'dev');
             
@@ -26,8 +26,7 @@ class basedados{
 
     public function adicionar($dados){
 
-        // print_r($dados);
-
+        // cria um novo registro na tabela doadores
         $novo = $this->db->prepare('INSERT INTO doadores (nome, email, cpf, telefone, data_nascimento, 
                                             data_cadastro, intervalo, valor, forma_pagamento, endereco)
                                         VALUES (:nome, :email, :cpf, :telefone, :data_nascimento, 
@@ -35,8 +34,8 @@ class basedados{
         if($novo->execute([
             'nome'              => $dados['nome'], 
             'email'             => $dados['email'], 
-            'cpf'               => $this->limpaCPF($dados['cpf']), 
-            'telefone'          => $dados['telefone'], 
+            'cpf'               => $this->somenteNumeros($dados['cpf']), 
+            'telefone'          => $this->somenteNumeros($dados['telefone']), 
             'data_nascimento'   => $dados['data_nascimento'],
             'data_cadastro'     => date('Y-m-d H:i:s'), 
             'intervalo'         => $dados['intervalo'], 
@@ -49,6 +48,7 @@ class basedados{
             return true;
 
         }else{
+            // echo 'lll';die;
             $this->db = null;        
             return false;
         }
@@ -57,6 +57,7 @@ class basedados{
 
     public function retornaDados($id){
 
+        // retorna os dados da tabela doadores de acordo com o id
         $query = $this->db->prepare('SELECT * FROM doadores WHERE id = :id LIMIT 1');
 
         if($query->execute([
@@ -72,18 +73,18 @@ class basedados{
 
     public function atualizar($dados){
 
-      
-        $novo = $this->db->prepare('UPDATE doadores SET nome = :nome, email = :email, cpf = :cpf, 
+        // atualiza o registro na tabela doadores de acordo com o id
+        $registro = $this->db->prepare('UPDATE doadores SET nome = :nome, email = :email, cpf = :cpf, 
                                             telefone = :telefone, data_nascimento = :data_nascimento, 
                                             data_cadastro = :data_cadastro, intervalo = :intervalo, 
                                             valor = :valor, forma_pagamento = :forma_pagamento, 
                                             endereco = :endereco
                                     WHERE id = :id');
-        if($novo->execute([
+        if($registro->execute([
             'nome'              => $dados['nome'], 
             'email'             => $dados['email'], 
-            'cpf'               => $this->limpaCPF($dados['cpf']), 
-            'telefone'          => $dados['telefone'], 
+            'cpf'               => $this->somenteNumeros($dados['cpf']), 
+            'telefone'          => $this->somenteNumeros($dados['telefone']), 
             'data_nascimento'   => $dados['data_nascimento'],
             'data_cadastro'     => date('Y-m-d H:i:s'), 
             'intervalo'         => $dados['intervalo'], 
@@ -104,9 +105,29 @@ class basedados{
         
     }
 
-    private function limpaCPF($cpf){
-        $cpf = str_replace('.', '', $cpf);
-        $cpf = str_replace('-', '', $cpf);
-        return $cpf;
+    public function deletar($id){
+        // exclui o registro na tabela doadores de acordo com o id
+        $registro = $this->db->prepare('DELETE FROM doadores WHERE id = :id');
+
+        if($registro->execute([
+            
+            'id' => $id
+        ]))
+        {
+            // echo 'aqui';die;
+            $this->db = null;        
+            return true;
+
+        }else{
+            $this->db = null;        
+            return false;
+        }
+        
+
+    }
+
+    private function somenteNumeros($cpf){
+        // limpa os caracteres       
+        return preg_replace('/[^0-9]/', '', $cpf);
     }
 }
